@@ -38,7 +38,7 @@ img: ridzki
 </h2>
 
 <h3 class="text-4xl font-bold text-white">
-The Core Processors
+Core Leadership
 </h3>
 
 </div>
