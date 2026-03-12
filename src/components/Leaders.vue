@@ -1,19 +1,22 @@
 <script setup>
 
+import rayival from "../assets/rayival.jpg"
+import ridzki from "../assets/ridzki.jpg"
+
 const leaders = [
 {
 role:"Ketua Murid (KM)",
 name:"Rayival Dede Saputra",
 alias:"root@leader",
 desc:"Orchestrating class synchronization and system integrity.",
-img:"src/assets/rayival.jpg"
+img: rayival
 },
 {
 role:"Wakil Ketua",
 name:"Ridzki Ahnovalrian Arifin",
 alias:"sudo@vice",
 desc:"Maintaining class stability and internal coordination.",
-img:"src/assets/ridzki.jpg"
+img: ridzki
 }
 ]
 
