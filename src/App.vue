@@ -1,14 +1,5 @@
 <script setup>
-
 import Navbar from "./components/Navbar.vue"
-import Hero from "./components/Hero.vue"
-import Leaders from "./components/Leaders.vue"
-import Students from "./components/Students.vue"
-import Gallery from "./components/Gallery.vue"
-import Footer from "./components/Footer.vue"
-import ClassMetrics from "./components/ClassMetrics.vue"
-import ClassMotto from "./components/ClassMotto.vue"
-
 </script>
 
 <template>
@@ -17,19 +8,7 @@ import ClassMotto from "./components/ClassMotto.vue"
 
 <Navbar/>
 
-<Hero/>
-
-<Leaders/>
-
-<Students/>
-
-<Gallery/>
-
-<ClassMetrics/>
-
-<ClassMotto/>
-
-<Footer/>
+<router-view/>
 
 </div>
 
