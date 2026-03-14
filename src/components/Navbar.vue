@@ -36,7 +36,7 @@ TI-B <span class="text-emerald-500">2025</span>
 </h1>
 
 <p class="text-[10px] text-emerald-400 font-mono">
-UNPER TASIKMALAYA
+UNIVERSITAS PERJUANGAN TASIKMALAYA
 </p>
 </div>
 
