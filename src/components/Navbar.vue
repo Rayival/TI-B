@@ -1,6 +1,20 @@
 <script setup>
-import { Terminal, Shuffle } from "lucide-vue-next"
+
+import { ref } from "vue"
+import { Terminal, Shuffle, Menu, X } from "lucide-vue-next"
+
+const open = ref(false)
+
+const toggleMenu = ()=>{
+open.value = !open.value
+}
+
+const closeMenu = ()=>{
+open.value = false
+}
+
 </script>
+
 
 <template>
 
@@ -28,7 +42,8 @@ UNPER TASIKMALAYA
 
 </div>
 
-<!-- MENU -->
+
+<!-- DESKTOP MENU -->
 
 <div class="hidden md:flex items-center gap-8 font-mono text-xs text-gray-400">
 
@@ -54,6 +69,77 @@ class="flex items-center gap-2 text-emerald-400 border border-emerald-500/30 px-
 >
 
 <Shuffle size="14"/>
+SPIN
+
+</router-link>
+
+</div>
+
+
+<!-- HAMBURGER BUTTON -->
+
+<button
+@click="toggleMenu"
+class="md:hidden text-emerald-400">
+
+<Menu v-if="!open" />
+<X v-else />
+
+</button>
+
+</div>
+
+
+<!-- MOBILE MENU -->
+
+<div
+v-if="open"
+class="md:hidden bg-[#070709] border-t border-emerald-500/20">
+
+<div class="flex flex-col text-center font-mono text-sm text-gray-300">
+
+<router-link
+to="/"
+@click="closeMenu"
+class="py-4 border-b border-white/5 hover:text-emerald-400">
+
+HOME
+
+</router-link>
+
+<a
+href="/#structure"
+@click="closeMenu"
+class="py-4 border-b border-white/5 hover:text-emerald-400">
+
+STRUCTURE
+
+</a>
+
+<a
+href="/#directory"
+@click="closeMenu"
+class="py-4 border-b border-white/5 hover:text-emerald-400">
+
+DIRECTORY
+
+</a>
+
+<a
+href="/#gallery"
+@click="closeMenu"
+class="py-4 border-b border-white/5 hover:text-emerald-400">
+
+GALLERY
+
+</a>
+
+<router-link
+to="/spin"
+@click="closeMenu"
+class="py-4 flex justify-center items-center gap-2 text-emerald-400">
+
+<Shuffle size="16"/>
 SPIN
 
 </router-link>
