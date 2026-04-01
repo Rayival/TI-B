@@ -117,7 +117,16 @@ class="text-slate-500 hover:text-white transition">
 <div class="mt-16 pt-6 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-4">
 
 <p class="text-[11px] font-mono text-slate-600">
-COMPILED BY RAYIVAL DEDE SAPUTRA © 2026
+  COMPILED BY 
+  <a
+    href="https://rayival.vercel.app"
+    target="_blank"
+    rel="noopener"
+    class="text-emerald-400 hover:text-white transition underline-offset-4 hover:underline"
+  >
+    RAYIVAL DEDE SAPUTRA
+  </a> 
+  © 2026
 </p>
 
 <div class="flex gap-4 text-[10px] font-mono text-slate-700">
