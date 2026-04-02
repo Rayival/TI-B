@@ -1,7 +1,7 @@
 <script setup>
 
 import { ref } from "vue"
-import { Terminal, Shuffle, Menu, X } from "lucide-vue-next"
+import { Terminal, Shuffle, MessageSquare, Menu, X } from "lucide-vue-next"
 
 const open = ref(false)
 
@@ -70,6 +70,16 @@ class="flex items-center gap-2 text-emerald-400 border border-emerald-500/30 px-
 
 <Shuffle size="14"/>
 SPIN
+
+</router-link>
+
+<router-link
+to="/menfess"
+class="flex items-center gap-2 text-emerald-400 border border-emerald-500/30 px-3 py-1 rounded hover:bg-emerald-500/10 hover:shadow-[0_0_10px_rgba(16,185,129,0.5)] transition"
+>
+
+<MessageSquare size="14"/>
+MENFESS
 
 </router-link>
 
@@ -142,6 +152,14 @@ class="py-4 flex justify-center items-center gap-2 text-emerald-400">
 <Shuffle size="16"/>
 SPIN
 
+</router-link>
+
+<router-link
+to="/menfess"
+@click="closeMenu"
+class="py-4 flex justify-center items-center gap-2 text-emerald-400">
+<MessageSquare size="16"/>
+MENFESS
 </router-link>
 
 </div>
