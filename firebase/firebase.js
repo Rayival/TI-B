@@ -1,19 +1,17 @@
 import { initializeApp } from "firebase/app"
 import { getFirestore } from "firebase/firestore"
 
-// config kamu (SUDAH BENAR)
+// ambil dari .env
 const firebaseConfig = {
-  apiKey: "AIzaSyBcQUOKF3xc0eAe524PiWDHKIpyXzkaf9s",
-  authDomain: "menfes-tib.firebaseapp.com",
-  projectId: "menfes-tib",
-  storageBucket: "menfes-tib.firebasestorage.app",
-  messagingSenderId: "939089354259",
-  appId: "1:939089354259:web:b1ebb01144894faf31a9e6",
-  measurementId: "G-QVJV7MSD7F"
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
+  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+  appId: import.meta.env.VITE_FIREBASE_APP_ID,
+  measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID
 }
 
-// init app
 const app = initializeApp(firebaseConfig)
 
-// 🔥 INI YANG PENTING
 export const db = getFirestore(app)
