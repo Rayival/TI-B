@@ -58,19 +58,27 @@ const send = async () => {
     return
   }
 
-  await addDoc(collection(db, "menfess"), {
-    message: message.value,
-    target: target.value,
-    song: selectedSong.value.name,
-    artist: selectedSong.value.artists[0].name,
-    cover: selectedSong.value.album.images[0].url,
-    preview: selectedSong.value.preview_url || null,
-    createdAt: serverTimestamp()
-  })
+  try {
+    const docRef = await addDoc(collection(db, "menfess"), {
+      message: message.value,
+      target: target.value,
+      song: selectedSong.value.name,
+      artist: selectedSong.value.artists[0].name,
+      cover: selectedSong.value.album.images[0].url,
+      preview: selectedSong.value.preview_url || null,
+      createdAt: serverTimestamp()
+    })
 
-  message.value = ""
-  target.value = ""
-  selectedSong.value = null
+    console.log("SUCCESS KE FIREBASE:", docRef.id)
+
+    message.value = ""
+    target.value = ""
+    selectedSong.value = null
+
+  } catch (err) {
+    console.error("FIREBASE ERROR:", err)
+    alert("Gagal kirim! cek console")
+  }
 }
 
 // REALTIME
