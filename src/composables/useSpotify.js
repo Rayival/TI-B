@@ -1,22 +1,42 @@
+import { ref } from "vue"
 import axios from "axios"
 
-export const getSpotifyToken = async () => {
+export const songs = ref([])
 
-const clientId = import.meta.env.VITE_SPOTIFY_CLIENT_ID
-const clientSecret = import.meta.env.VITE_SPOTIFY_CLIENT_SECRET
+export const searchSong = async (q) => {
+  if (!q) {
+    songs.value = []
+    return
+  }
 
-const res = await axios.post(
-"https://accounts.spotify.com/api/token",
-new URLSearchParams({
-grant_type:"client_credentials"
-}),
-{
-headers:{
-"Content-Type":"application/x-www-form-urlencoded",
-Authorization:"Basic " + btoa(clientId + ":" + clientSecret)
-}
-}
-)
+  try {
+    const res = await axios.get("https://itunes.apple.com/search", {
+      params: {
+        term: q,
+        entity: "song",
+        limit: 8
+      }
+    })
 
-return res.data.access_token
+    songs.value = res.data.results
+      .filter(item => item.previewUrl) // 🔥 pastikan bisa diputar
+      .map(item => ({
+        id: item.trackId,
+        name: item.trackName,
+        artists: [{ name: item.artistName }],
+        album: {
+          images: [{ url: item.artworkUrl100 }]
+        },
+        preview_url: item.previewUrl, // 🎧 buat play
+
+        // 🔗 buat buka spotify
+        spotify_url: `https://open.spotify.com/search/${encodeURIComponent(
+          item.trackName + " " + item.artistName
+        )}`
+      }))
+
+  } catch (err) {
+    console.error("iTunes Error:", err)
+    songs.value = []
+  }
 }

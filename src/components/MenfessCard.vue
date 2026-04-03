@@ -1,70 +1,104 @@
 <script setup>
-
-import { ref, computed } from "vue"
-import dayjs from "dayjs"
-import relativeTime from "dayjs/plugin/relativeTime"
-
-dayjs.extend(relativeTime)
+import { ref } from "vue"
 
 const props = defineProps({
- item:Object
+  item: Object
 })
 
-const expanded = ref(false)
+const show = ref(false)
+const audio = ref(null)
+const playing = ref(false)
 
-const shortText = computed(()=>{
- if(expanded.value) return props.item.message
- return props.item.message.slice(0,120) + "..."
-})
+const play = () => {
+  if (!props.item.preview) return
 
-const isLong = computed(()=>{
- return props.item.message.length > 120
-})
+  if (audio.value) {
+    audio.value.pause()
+    audio.value = null
+    playing.value = false
+    return
+  }
 
+  audio.value = new Audio(props.item.preview)
+  audio.value.play()
+  playing.value = true
+
+  audio.value.onended = () => {
+    audio.value = null
+    playing.value = false
+  }
+}
 </script>
 
 <template>
 
-<div class="bg-[#0b0b0e] border border-emerald-500/20 p-5 rounded-xl">
+<!-- CARD -->
+<div 
+@click="show = true"
+class="bg-[#0A0A12] border border-white/5 p-4 rounded-xl cursor-pointer hover:bg-[#12121a]">
 
-<div class="flex gap-3 mb-3">
+<div class="flex items-center gap-3">
 
-<img
-:src="item.cover"
-class="w-14 h-14 rounded"
-/>
+<img :src="item.cover" class="w-12 h-12 rounded-lg"/>
 
-<div>
+<div class="flex-1">
+<p class="text-sm text-white font-semibold">{{ item.song }}</p>
+<p class="text-xs text-gray-400">{{ item.artist }}</p>
 
-<p class="text-white text-sm">
-{{ item.song }}
-</p>
-
-<p class="text-gray-400 text-xs">
-{{ item.artist }}
-</p>
-
-</div>
-
-</div>
-
-<p class="text-gray-300 text-sm whitespace-pre-line">
-{{ shortText }}
-</p>
-
-<button
-v-if="isLong"
-@click="expanded = !expanded"
-class="text-emerald-400 text-xs mt-2"
->
-
-{{ expanded ? "Show less" : "Read more" }}
-
+<button 
+@click.stop="play"
+class="text-xs text-emerald-400 mt-1">
+{{ playing ? "⏸ Pause" : "▶ Play" }}
 </button>
 
-<p class="text-gray-500 text-xs mt-3">
-{{ dayjs(item.createdAt?.toDate()).fromNow() }}
+</div>
+
+</div>
+
+<p class="mt-3 text-xs text-emerald-400">
+To: {{ item.target || "Someone" }}
 </p>
+
+<p class="mt-2 text-sm text-gray-300 line-clamp-2">
+{{ item.message }}
+</p>
+
+</div>
+
+<!-- MODAL -->
+<div 
+v-if="show"
+class="fixed inset-0 bg-black/70 flex items-center justify-center z-50"
+@click.self="show = false">
+
+<div class="bg-[#0A0A12] p-6 rounded-2xl max-w-md w-full">
+
+<img :src="item.cover" class="w-full rounded-xl mb-4"/>
+
+<h2 class="text-lg font-bold text-white">{{ item.song }}</h2>
+<p class="text-sm text-gray-400 mb-3">{{ item.artist }}</p>
+
+<p class="text-emerald-400 text-sm mb-2">
+To: {{ item.target || "Someone" }}
+</p>
+
+<p class="text-gray-300 text-sm mb-4">
+{{ item.message }}
+</p>
+
+<button 
+@click="play"
+class="w-full border border-emerald-500 text-emerald-400 py-2 rounded-lg">
+{{ playing ? "Pause" : "Play Preview" }}
+</button>
+
+<button 
+@click="show = false"
+class="mt-2 w-full bg-emerald-500 text-black py-2 rounded-lg">
+Close
+</button>
+
+</div>
 
 </div>
 
