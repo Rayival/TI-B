@@ -1,149 +1,152 @@
 <script setup>
-import { ref, onMounted, computed } from 'vue'
-import { db } from '/firebase/firebase'
+
+import { ref, onMounted } from "vue"
+import { db } from "../firebase/firebase"
 
 import {
-  collection,
-  addDoc,
-  serverTimestamp,
-  onSnapshot,
-  query,
-  orderBy
+ collection,
+ addDoc,
+ serverTimestamp,
+ onSnapshot,
+ query,
+ orderBy
 } from "firebase/firestore"
 
+import { searchSong, songs } from "../composables/useSpotify"
+import MenfessCard from "../components/MenfessCard.vue"
+
 const message = ref("")
-const to = ref("")
-const search = ref("")
-const menfessList = ref([])
+const target = ref("")
+const selectedSong = ref(null)
+const querySong = ref("")
+const list = ref([])
 
-const sendMenfess = async () => {
-  if (!message.value || !to.value)
-    return alert("Isi penerima dan pesan!")
+const send = async ()=>{
 
-  await addDoc(collection(db, "menfess"), {
-    message: message.value,
-    to: to.value,
-    createdAt: serverTimestamp()
-  })
+ if(!message.value || !selectedSong.value) return
 
-  message.value = ""
-  to.value = ""
+ await addDoc(collection(db,"menfess"),{
+  message:message.value,
+  target:target.value,
+  song:selectedSong.value.name,
+  artist:selectedSong.value.artists[0].name,
+  cover:selectedSong.value.album.images[0].url,
+  createdAt:serverTimestamp()
+ })
+
+ message.value=""
+ target.value=""
 }
 
-onMounted(() => {
-  const q = query(
-    collection(db, "menfess"),
-    orderBy("createdAt", "desc")
-  )
+onMounted(()=>{
 
-  onSnapshot(q, (snapshot) => {
-    menfessList.value = snapshot.docs.map(doc => ({
-      id: doc.id,
-      ...doc.data()
-    }))
-  })
+ const q = query(
+  collection(db,"menfess"),
+  orderBy("createdAt","desc")
+ )
+
+ onSnapshot(q,(snap)=>{
+
+  list.value = snap.docs.map(d=>({
+   id:d.id,
+   ...d.data()
+  }))
+
+ })
+
 })
 
-const filteredMenfess = computed(() => {
-  return menfessList.value.filter(item =>
-    item.to?.toLowerCase().includes(search.value.toLowerCase()) ||
-    item.message?.toLowerCase().includes(search.value.toLowerCase())
-  )
-})
-
-const formatTime = (timestamp) => {
-  if (!timestamp) return ""
-  const date = timestamp.toDate()
-  return date.toLocaleString()
-}
 </script>
 
+
 <template>
-<div class="min-h-screen bg-[#03030A] text-[#EDEDEE] flex justify-center pt-24">
 
-<div class="w-full max-w-xl px-6">
+<div class="min-h-screen bg-[#03030A] text-[#EDEDEE] pt-24 pb-20">
 
-<!-- HEADER -->
-<div class="text-center mb-10">
+<div class="max-w-4xl mx-auto px-6">
 
-<h1 class="text-3xl font-bold text-[#10B981]">
-Send Anonymous Message
+<h1 class="text-2xl font-bold mb-6 text-emerald-400">
+Anonymous Song Message
 </h1>
 
-<p class="text-gray-400 text-sm mt-2">
-TI-B Anonymous Board
+<!-- search song -->
+
+<input
+v-model="querySong"
+@input="searchSong(querySong)"
+placeholder="Search song..."
+class="w-full bg-black border border-gray-700 p-3 rounded"
+/>
+
+<div class="mt-4 space-y-2">
+
+<div
+v-for="s in songs"
+:key="s.id"
+@click="selectedSong = s"
+class="flex items-center gap-3 p-2 rounded cursor-pointer hover:bg-[#101015]"
+>
+
+<img :src="s.album.images[0].url" class="w-10 h-10 rounded"/>
+
+<div>
+
+<p class="text-sm">
+{{ s.name }}
+</p>
+
+<p class="text-xs text-gray-400">
+{{ s.artists[0].name }}
 </p>
 
 </div>
 
-<!-- FORM -->
-<div class="bg-[#0f0f13] border border-gray-800 rounded-2xl p-6 mb-8">
+</div>
+
+</div>
+
+
+<!-- form -->
+
+<div class="mt-6">
 
 <input
-v-model="to"
-placeholder="Pesan ini untuk siapa?"
-class="w-full mb-4 p-3 rounded-lg bg-[#03030A] border border-gray-700 focus:border-[#10B981] outline-none"
+v-model="target"
+placeholder="Message for..."
+class="w-full mb-3 p-3 bg-black border border-gray-700 rounded"
 />
 
 <textarea
 v-model="message"
-rows="3"
-placeholder="Tulis pesan anonim..."
-class="w-full p-3 rounded-lg bg-[#03030A] border border-gray-700 focus:border-[#10B981] outline-none"
+rows="4"
+placeholder="Write anonymous message..."
+class="w-full p-3 bg-black border border-gray-700 rounded"
 />
 
 <button
-@click="sendMenfess"
-class="w-full mt-4 py-3 bg-[#10B981] hover:bg-emerald-400 text-black font-semibold rounded-lg transition"
+@click="send"
+class="mt-3 bg-emerald-500 text-black px-5 py-2 rounded"
 >
-Kirim Pesan
+Send
 </button>
 
 </div>
 
-<!-- SEARCH -->
-<div class="mb-6">
 
-<input
-v-model="search"
-placeholder="Cari pesan..."
-class="w-full p-3 rounded-lg bg-[#0f0f13] border border-gray-800 focus:border-[#10B981] outline-none"
+<!-- feed -->
+
+<div class="grid md:grid-cols-2 gap-6 mt-10">
+
+<MenfessCard
+v-for="item in list"
+:key="item.id"
+:item="item"
 />
 
 </div>
 
-<!-- MESSAGE LIST -->
-<div class="space-y-4">
-
-<div
-v-for="item in filteredMenfess"
-:key="item.id"
-class="bg-[#0f0f13] border border-gray-800 rounded-xl p-5"
->
-
-<p class="text-sm text-[#10B981] mb-1">
-Untuk: {{ item.to }}
-</p>
-
-<p class="text-gray-200 leading-relaxed">
-{{ item.message }}
-</p>
-
-<div class="flex justify-between text-xs text-gray-500 mt-4">
-
-<span>Anonim</span>
-
-<span>
-{{ formatTime(item.createdAt) }}
-</span>
-
 </div>
 
 </div>
 
-</div>
-
-</div>
-
-</div>
 </template>
